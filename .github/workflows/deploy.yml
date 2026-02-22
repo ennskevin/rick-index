@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  PROJECT_NAME: rick_index
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -53,7 +56,7 @@ jobs:
 
       - name: Deploy to S3 folder
         run: |
-          aws s3 sync $DEPLOY_FOLDER s3://${{ secrets.S3_BUCKET }}/rick_index \
+          aws s3 sync $DEPLOY_FOLDER s3://${{ secrets.S3_BUCKET }}/${{ env.PROJECT_NAME }} \
             --delete \
             --exclude ".git/*" \
             --exclude ".gitignore" \
@@ -63,4 +66,4 @@ jobs:
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/rick_index/*"
+            --paths "/${{ env.PROJECT_NAME }}/*"
